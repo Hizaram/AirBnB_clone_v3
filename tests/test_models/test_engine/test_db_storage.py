@@ -13,7 +13,9 @@ from models.city import City
 from models.place import Place
 from models.review import Review
 from models.state import State
+from models import storage
 from models.user import User
+
 import json
 import os
 import pep8
@@ -38,7 +40,7 @@ class TestDBStorageDocs(unittest.TestCase):
                          "Found code style errors (and warnings).")
 
     def test_pep8_conformance_test_db_storage(self):
-        """Test tests/test_models/test_db_storage.py conforms to PEP8."""
+        """Test tests/test_models/test_db_storage.py and check conforms to PEP8."""
         pep8s = pep8.StyleGuide(quiet=True)
         result = pep8s.check_files(['tests/test_models/test_engine/\
 test_db_storage.py'])
@@ -60,7 +62,7 @@ test_db_storage.py'])
                         "DBStorage class needs a docstring")
 
     def test_dbs_func_docstrings(self):
-        """Test for the presence of docstrings in DBStorage methods"""
+        """Test for the presence of docstrings in DBStorage's methods"""
         for func in self.dbs_f:
             self.assertIsNot(func[1].__doc__, None,
                              "{:s} method needs a docstring".format(func[0]))
@@ -72,7 +74,7 @@ class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_all_returns_dict(self):
-        """Test that all returns a dictionaty"""
+        """Test that all method returns a dictionaty"""
         self.assertIs(type(models.storage.all()), dict)
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
@@ -85,4 +87,25 @@ class TestFileStorage(unittest.TestCase):
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
-        """Test that save properly saves objects to file.json"""
+        """Test that save accurately saves objects to file.json"""
+
+    def test_get_db(self):
+        """ Tests method for obtaining an instance of db storage"""
+        dic = {"name": "Cundinamarca"}
+        instance = State(**dic)
+        storage.new(instance)
+        storage.save()
+        get_instance = storage.get(State, instance.id)
+        self.assertEqual(get_instance, instance)
+
+    def test_count(self):
+        """ Tests count method in db storage """
+        dic = {"name": "Vecindad"}
+        state = State(**dic)
+        storage.new(state)
+        dic = {"name": "Mexico", "state_id": state.id}
+        city = City(**dic)
+        storage.new(city)
+        storage.save()
+        c = storage.count()
+        self.assertEqual(len(storage.all()), c)

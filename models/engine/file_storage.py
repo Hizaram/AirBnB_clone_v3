@@ -4,6 +4,7 @@ Contains the FileStorage class
 """
 
 import json
+import models
 from models.amenity import Amenity
 from models.base_model import BaseModel
 from models.city import City
@@ -11,9 +12,6 @@ from models.place import Place
 from models.review import Review
 from models.state import State
 from models.user import User
-
-classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
-           "Place": Place, "Review": Review, "State": State, "User": User}
 
 
 class FileStorage:
@@ -54,8 +52,8 @@ class FileStorage:
             with open(self.__file_path, 'r') as f:
                 jo = json.load(f)
             for key in jo:
-                self.__objects[key] = classes[jo[key]["__class__"]](**jo[key])
-        except:
+                self.__objects[key] = models.classes[jo[key]["__class__"]](**jo[key])
+        except FileNotFoundError:
             pass
 
     def delete(self, obj=None):
@@ -68,3 +66,30 @@ class FileStorage:
     def close(self):
         """call reload() method for deserializing the JSON file to objects"""
         self.reload()
+
+    def get(self, cls, id):
+        '''
+        Retrieves one object based on the ID
+        '''
+        if cls not in models.classes.values():
+            return None
+        obj_list = models.storage.all(cls).values()
+        for obj in obj_list:
+            if obj.id == id:
+                return obj
+        return None
+
+    def count(self, cls=None):
+        """
+        Gets the count of objects
+        Args:
+            cls (str): class to query
+        Returns:
+            count of objects
+        """
+        if cls is None:
+            return len(models.storage.all())
+        elif cls in models.classes.values():
+            return len(models.storage.all(cls))
+        else:
+            return 0
