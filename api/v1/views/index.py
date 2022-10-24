@@ -10,6 +10,7 @@ def hello_status():
     """Function that returns the jsonfied version of status"""
     return jsonify({'status': 'OK'})
 
+
 @app_views.route('/stats', methods=['GET'], strict_slashes=False)
 def hello_stats():
     """Function that retrieves the number of each object in JSON format
