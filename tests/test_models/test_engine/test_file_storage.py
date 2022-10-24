@@ -60,7 +60,7 @@ test_file_storage.py'])
                         "FileStorage class needs a docstring")
 
     def test_fs_func_docstrings(self):
-        """Test for the presence of docstrings in FileStorage methods"""
+        """Test for the presence of docstrings in FileStorage's methods"""
         for func in self.fs_f:
             self.assertIsNot(func[1].__doc__, None,
                              "{:s} method needs a docstring".format(func[0]))
