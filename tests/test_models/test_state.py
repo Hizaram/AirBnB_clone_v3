@@ -3,6 +3,7 @@
 Contains the TestStateDocs classes
 """
 
+from os import getenv
 from datetime import datetime
 import inspect
 import models
@@ -71,7 +72,7 @@ class TestState(unittest.TestCase):
         """Test that State has attribute name, and it's as an empty string"""
         state = State()
         self.assertTrue(hasattr(state, "name"))
-        if models.storage_t == 'db':
+        if getenv('HBNB_TYPE_STORAGE') == 'db':
             self.assertEqual(state.name, None)
         else:
             self.assertEqual(state.name, "")

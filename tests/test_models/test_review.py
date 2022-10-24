@@ -3,6 +3,7 @@
 Contains the TestReviewDocs classes
 """
 
+from os import getenv
 from datetime import datetime
 import inspect
 import models
@@ -71,7 +72,7 @@ class TestReview(unittest.TestCase):
         """Test Review has attr place_id, and it's an empty string"""
         review = Review()
         self.assertTrue(hasattr(review, "place_id"))
-        if models.storage_t == 'db':
+        if getenv('HBNB_TYPE_STORAGE') == 'db':
             self.assertEqual(review.place_id, None)
         else:
             self.assertEqual(review.place_id, "")
@@ -80,7 +81,7 @@ class TestReview(unittest.TestCase):
         """Test Review has attr user_id, and it's an empty string"""
         review = Review()
         self.assertTrue(hasattr(review, "user_id"))
-        if models.storage_t == 'db':
+        if getenv('HBNB_TYPE_STORAGE') == 'db':
             self.assertEqual(review.user_id, None)
         else:
             self.assertEqual(review.user_id, "")
@@ -89,7 +90,7 @@ class TestReview(unittest.TestCase):
         """Test Review has attr text, and it's an empty string"""
         review = Review()
         self.assertTrue(hasattr(review, "text"))
-        if models.storage_t == 'db':
+        if getenv('HBNB_TYPE_STORAGE') == 'db':
             self.assertEqual(review.text, None)
         else:
             self.assertEqual(review.text, "")
