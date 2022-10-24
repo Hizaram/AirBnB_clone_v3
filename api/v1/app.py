@@ -3,10 +3,12 @@
 from os import getenv
 from models import storage
 from api.v1.views import app_views
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, jsonify
 
 
 app = Flask(__name__)
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
+
 app.register_blueprint(app_views)
 
 
@@ -17,6 +19,19 @@ def teardown(error):
         error [str]: Error message or exception
     """
     storage.close()
+
+
+@app.errorhandler(404)
+def not_found(message):
+    """Handles the error 404 status code
+    Arguments:
+        message (str): The string to display in place of an error
+    Returns:
+        The HTTP response for the request
+    """
+    response = jsonify({"error": "Not found"})
+    response.status_code = 404
+    return response
 
 
 if __name__ == "__main__":
