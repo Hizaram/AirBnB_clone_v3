@@ -15,9 +15,7 @@ from os import getenv
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-
-classes = {"Amenity": Amenity, "City": City,
-           "Place": Place, "Review": Review, "State": State, "User": User}
+from sqlalchemy.orm.exc import MultipleResultsFound
 
 
 class DBStorage:
@@ -43,9 +41,9 @@ class DBStorage:
     def all(self, cls=None):
         """query on the current database session"""
         new_dict = {}
-        for clss in classes:
-            if cls is None or cls is classes[clss] or cls is clss:
-                objs = self.__session.query(classes[clss]).all()
+        for clss in models.classes:
+            if cls is None or cls is models.classes[clss] or cls is clss:
+                objs = self.__session.query(models.classes[clss]).all()
                 for obj in objs:
                     key = obj.__class__.__name__ + '.' + obj.id
                     new_dict[key] = obj
@@ -74,3 +72,33 @@ class DBStorage:
     def close(self):
         """call remove() method on the private session attribute"""
         self.__session.remove()
+
+    def get(self, cls, id):
+        """Method to retrieve an entry from the database
+        Arguments:
+            cls (str): String representation of the class of the entry
+            id (str): id of the object entry
+        Returns:
+            The object that matches the argument, otherwise None
+        """
+        if cls not in models.classes.values():
+            return None
+
+        try:
+            return self.__session.query(cls).filter_by(id=id).one_or_none()
+        except MultipleResultsFound:
+            return None
+
+    def count(self, cls=None):
+        """Method to return the number of objects stored in the db
+        Arguments:
+            cls (str): String representation of the object entry
+        Returns:
+            The number of objects in the database
+        """
+        if cls is None:
+            return len(models.storage.all().values())
+        elif cls not in models.classes.values():
+            return 0
+        else:
+            return len(models.storage.all(cls).values())
