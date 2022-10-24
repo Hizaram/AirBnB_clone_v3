@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.register_blueprint(app_views)
 
 
-@app.teardown_context
+@app.teardown_appcontext
 def teardown(error):
     """Function that stops the current session
     Arguments:
